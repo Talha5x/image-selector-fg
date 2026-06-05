@@ -3,9 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
     <title>🔐 অ্যাডমিন লগইন - ইমেজ সিলেক্টর</title>
+    <meta name="description" content="ইমেজ সিলেক্টর অ্যাডমিন লগইন প্যানেল। নিরাপদ প্রশাসক অ্যাক্সেস।">
+    <meta name="keywords" content="অ্যাডমিন, লগইন, ইমেজ সিলেক্টর, অ্যাডমিন প্যানেল">
+    <meta name="author" content="FG2026">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://image-selector-fg.vercel.app/admin.html">
+    <meta property="og:title" content="🔐 অ্যাডমিন লগইন - ইমেজ সিলেক্টর">
+    <meta property="og:description" content="নিরাপদ প্রশাসক প্যানেল">
+    <meta property="og:image" content="https://picture-link-generator.rf.gd/uploads/image-selector.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://image-selector-fg.vercel.app/admin.html">
+    <meta name="twitter:title" content="🔐 অ্যাডমিন লগইন - ইমেজ সিলেক্টর">
+    <meta name="twitter:description" content="নিরাপদ প্রশাসক প্যানেল">
+    <meta name="twitter:image" content="https://picture-link-generator.rf.gd/uploads/image-selector.png">
+    
+    <!-- Theme & Icons -->
+    <meta name="theme-color" content="#1a1d23">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="অ্যাডমিন লগইন">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://image-selector-fg.vercel.app/admin.html">
+    
+    <!-- Favicon -->
     <link rel="icon" href="https://picture-link-generator.rf.gd/uploads/image-selector.png">
+    <link rel="apple-touch-icon" href="https://picture-link-generator.rf.gd/uploads/image-selector.png">
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root{--bg-primary:#1a1d23;--bg-card:#282c34;--bg-input:#1e2128;--text-primary:#e1e4e8;--text-secondary:#8b949e;--text-muted:#6e7681;--accent-steel:#4a5568;--accent-blue:#58a6ff;--accent-blue-glow:rgba(88,166,255,0.3);--accent-purple:#8b5cf6;--error:#f85149;--error-glow:rgba(248,81,73,0.3);--border:#30363d;--shadow-xl:0 20px 60px rgba(0,0,0,0.6);--radius-sm:8px;--radius:12px;--radius-xl:20px;--transition:all 0.25s ease}
         *{margin:0;padding:0;box-sizing:border-box}
@@ -27,18 +62,13 @@
         label{font-weight:600;font-size:0.85rem;color:var(--text-primary)}
         input{width:100%;padding:13px 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.92rem;color:var(--text-primary);font-family:inherit;transition:var(--transition)}
         input:focus{outline:none;border-color:var(--accent-blue);box-shadow:0 0 0 4px var(--accent-blue-glow)}
-        .pw-wrap{position:relative}
-        .pw-wrap input{padding-right:46px}
-        .pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:6px;color:var(--text-muted);display:flex;align-items:center}
-        .pw-toggle:hover{color:var(--accent-blue)}
+        .pw-wrap{position:relative}.pw-wrap input{padding-right:46px}
+        .pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:6px;color:var(--text-muted);display:flex;align-items:center}.pw-toggle:hover{color:var(--accent-blue)}
         .error-msg{color:var(--error);font-size:0.78rem;min-height:16px}
-        .login-error{background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);color:var(--error);padding:10px 14px;border-radius:var(--radius-sm);text-align:center;display:none;font-size:0.85rem}
-        .login-error.show{display:block}
+        .login-error{background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);color:var(--error);padding:10px 14px;border-radius:var(--radius-sm);text-align:center;display:none;font-size:0.85rem}.login-error.show{display:block}
         @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-        .btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));color:#fff;border:none;border-radius:var(--radius-sm);font-size:1rem;font-weight:700;cursor:pointer;transition:var(--transition);font-family:inherit;box-shadow:0 6px 20px var(--accent-blue-glow)}
-        .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-blue-glow)}
-        .back{display:block;text-align:center;margin-top:14px;color:var(--accent-blue);text-decoration:none;font-weight:500;font-size:0.85rem}
-        .back:hover{text-decoration:underline}
+        .btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));color:#fff;border:none;border-radius:var(--radius-sm);font-size:1rem;font-weight:700;cursor:pointer;transition:var(--transition);font-family:inherit;box-shadow:0 6px 20px var(--accent-blue-glow)}.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-blue-glow)}
+        .back{display:block;text-align:center;margin-top:14px;color:var(--accent-blue);text-decoration:none;font-weight:500;font-size:0.85rem}.back:hover{text-decoration:underline}
         footer{text-align:center;margin-top:18px;color:var(--text-muted);font-size:0.78rem}
     </style>
 </head>
@@ -46,7 +76,7 @@
 <div class="container">
     <div class="badge"><span>🔒 Restricted Access</span></div>
     <header class="header">
-        <img src="https://picture-link-generator.rf.gd/uploads/image-selector.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+        <img src="https://picture-link-generator.rf.gd/uploads/image-selector.png" alt="Image Selector Logo" class="logo-img" onerror="this.style.display='none'">
         <h1>অ্যাডমিন লগইন</h1>
         <p>নিরাপদ প্রশাসক প্যানেল</p>
     </header>
