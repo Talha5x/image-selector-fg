@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📸 ইমেজ সিলেক্টর - মাসিক প্রতিযোগিতা</title>
+    <link rel="icon" href="https://picture-link-generator.rf.gd/uploads/image-selector.png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg-primary:#1a1d23;--bg-card:#282c34;--bg-input:#1e2128;--text-primary:#e1e4e8;--text-secondary:#8b949e;--text-muted:#6e7681;--accent-steel:#4a5568;--accent-blue:#58a6ff;--accent-blue-glow:rgba(88,166,255,0.3);--accent-purple:#8b5cf6;--success:#3fb950;--success-glow:rgba(63,185,80,0.3);--warning:#d29922;--error:#f85149;--border:#30363d;--shadow-xl:0 20px 60px rgba(0,0,0,0.6);--radius-sm:8px;--radius:12px;--radius-lg:16px;--radius-xl:20px;--radius-2xl:24px;--transition:all 0.25s ease;--transition-bounce:all 0.5s cubic-bezier(0.68,-0.55,0.265,1.55)}
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        body{font-family:'Poppins','Noto Sans Bengali',sans-serif;background:var(--bg-primary);background-image:radial-gradient(ellipse at 15% 25%,rgba(88,166,255,0.04),transparent 50%),radial-gradient(ellipse at 85% 20%,rgba(139,92,246,0.04),transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(74,85,104,0.06),transparent 60%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+        @keyframes float{0%,100%{transform:translateY(0)translateX(0)scale(1);opacity:0.1}50%{transform:translateY(-35px)translateX(20px)scale(1.3);opacity:0.15}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+        @keyframes popIn{0%{opacity:0;transform:scale(0.7)}60%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes stepActivate{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1.1)}}
+        @keyframes stepGlow{0%{box-shadow:0 0 0 0px var(--accent-blue-glow)}50%{box-shadow:0 0 0 12px var(--accent-blue-glow)}100%{box-shadow:0 0 0 6px var(--accent-blue-glow)}}
+
+        .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+        .particle{position:absolute;border-radius:50%;animation:float 20s infinite}
+        .particle:nth-child(1){width:6px;height:6px;left:8%;top:25%;background:rgba(88,166,255,0.15);animation-delay:0s}
+        .particle:nth-child(2){width:4px;height:4px;left:72%;top:55%;background:rgba(139,92,246,0.12);animation-delay:3s}
+        .particle:nth-child(3){width:8px;height:8px;left:35%;top:75%;background:rgba(74,85,104,0.1);animation-delay:6s}
+
+        .container{position:relative;z-index:1;width:100%;max-width:620px;animation:slideUp 0.8s ease-out}
+
+        .countdown-banner{text-align:center;padding:18px 24px;border-radius:var(--radius-lg);margin-bottom:18px;font-weight:600;font-size:0.95rem;display:block;transition:all 0.3s ease}
+        .countdown-banner.running{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;border:1px solid rgba(255,255,255,0.15);box-shadow:0 8px 30px rgba(108,92,231,0.35)}
+        .countdown-banner.upcoming{background:linear-gradient(135deg,#fdcb6e,#f39c12);color:#1a1d23;border:1px solid rgba(0,0,0,0.1);box-shadow:0 8px 30px rgba(253,203,110,0.4)}
+        .countdown-banner.ended{background:linear-gradient(135deg,#fdcb6e,#e67e22);color:#1a1d23;border:2px solid #f39c12;padding:22px;box-shadow:0 12px 40px rgba(253,203,110,0.5)}
+        .countdown-banner.no-time{background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border);box-shadow:none}
+        .winner-banner-content{display:flex;flex-direction:column;align-items:center;gap:8px}.winner-banner-content:hover{transform:scale(1.02)}.winner-banner-crown{font-size:2.5rem;animation:bounce 1.5s ease-in-out infinite}
+
+        .blur-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(12px);z-index:5;display:none;justify-content:center;align-items:center}
+        .blur-overlay.show{display:flex}.blur-message{background:var(--bg-card);padding:28px;border-radius:var(--radius-xl);text-align:center;box-shadow:var(--shadow-xl);max-width:400px;position:relative;border:1px solid var(--border)}
+        .blur-close-btn{position:absolute;top:12px;right:14px;background:var(--bg-input);border:1px solid var(--border);font-size:1.3rem;cursor:pointer;color:var(--text-muted);width:34px;height:34px;border-radius:50%}.blur-close-btn:hover{background:var(--error);color:#fff}
+
+        .dup-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:100;display:none;justify-content:center;align-items:center}
+        .dup-modal.show{display:flex}.dup-card{background:var(--bg-card);padding:28px;border-radius:var(--radius-xl);text-align:center;max-width:420px;box-shadow:var(--shadow-xl);border:1px solid var(--border)}
+        .dup-card .icon{font-size:3.5rem}.dup-card h3{color:var(--error)}.dup-card p{color:var(--text-secondary);font-size:0.9rem;margin-bottom:14px}
+        .dup-card button{padding:10px 24px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));color:#fff;border:none;border-radius:50px;cursor:pointer;font-weight:600}
+
+        .top-badge{text-align:center;margin-bottom:14px}.badge-pill{display:inline-block;background:var(--bg-card);color:var(--accent-blue);padding:8px 20px;border-radius:50px;font-size:0.82rem;font-weight:600;border:1px solid var(--border)}
+        .badge-pill .dot{display:inline-block;width:8px;height:8px;background:var(--success);border-radius:50%;margin-right:8px;animation:pulse 2s infinite}
+
+        .app-header{text-align:center;margin-bottom:24px}.logo-img-header{width:70px;height:70px;border-radius:16px;object-fit:contain;background:var(--bg-input);padding:8px;border:2px solid var(--border);margin-bottom:12px}
+        .app-title{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.app-subtitle{font-size:0.95rem;color:var(--text-secondary)}
+
+        /* ⭐ মেইন কার্ড - টগল করার জন্য */
+        .main-card{background:var(--bg-card);border-radius:var(--radius-2xl);padding:32px 28px;box-shadow:var(--shadow-xl);border:1px solid var(--border);position:relative;overflow:hidden;transition:all 0.3s ease}
+        .main-card.hidden{display:none}
+        .main-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent-steel),var(--accent-blue),var(--accent-purple))}
+
+        .steps-container{display:flex;justify-content:space-between;margin-bottom:26px;position:relative}
+        .steps-container::before{content:'';position:absolute;top:17px;left:28px;right:28px;height:2px;background:var(--border);z-index:0}
+        .steps-container::after{content:'';position:absolute;top:17px;left:28px;height:2px;background:linear-gradient(90deg,var(--accent-blue),var(--success));z-index:0;transition:width 0.5s ease}
+        .steps-container.step1-done::after{width:calc(25% - 28px)}.steps-container.step2-done::after{width:calc(50% - 28px)}.steps-container.step3-done::after{width:calc(75% - 28px)}.steps-container.step4-done::after{width:calc(100% - 56px)}
+        .step{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;flex:1}
+        .step-circle{width:36px;height:36px;border-radius:50%;background:var(--bg-input);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:var(--text-muted);transition:var(--transition-bounce)}
+        .step.active .step-circle{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff;animation:stepActivate 0.5s ease forwards,stepGlow 1.5s ease-in-out infinite}
+        .step.done .step-circle{background:var(--success);border-color:var(--success);color:#fff;animation:stepDone 0.4s ease forwards}
+        .step.error .step-circle{background:var(--error);border-color:var(--error);color:#fff}
+        .step-label{font-size:0.68rem;font-weight:500;color:var(--text-muted)}.step.active .step-label{color:var(--accent-blue)}.step.done .step-label{color:var(--success)}
+
+        .submission-form{display:flex;flex-direction:column;gap:18px}.form-group{display:flex;flex-direction:column;gap:5px}
+        .form-label{font-weight:600;font-size:0.88rem;color:var(--text-primary);display:flex;align-items:center;gap:6px}.required-star{color:var(--error)}
+        .form-select{width:100%;padding:13px 40px 13px 15px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.92rem;color:var(--text-primary);cursor:pointer;font-family:inherit;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+        .form-select:focus{outline:none;border-color:var(--accent-blue);box-shadow:0 0 0 4px var(--accent-blue-glow)}
+
+        /* ⭐ ফাইল আপলোড এরিয়া ফিক্স */
+        .file-upload-area{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:30px 20px;text-align:center;cursor:pointer;transition:var(--transition);background:var(--bg-input);position:relative}
+        .file-upload-area:hover{border-color:var(--accent-blue)}.file-upload-area.drag-over{border-color:var(--accent-purple)}
+        .upload-icon-large{font-size:3rem;display:block;margin-bottom:10px}.upload-text{font-weight:600;color:var(--text-primary)}.upload-hint{font-size:0.78rem;color:var(--text-muted)}
+        .upload-btn-inline{display:inline-block;margin-top:10px;padding:9px 22px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));color:#fff;border-radius:50px;font-weight:600;font-size:0.84rem;cursor:pointer;border:none}.upload-btn-inline:hover{transform:translateY(-2px)}
+
+        /* ⭐ প্রিভিউ কন্টেইনার ফিক্স - ওভারলে ভিতরে */
+        .preview-container{display:none;margin-top:12px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative}
+        .preview-container.show{display:block;animation:fadeIn 0.4s ease}
+        .preview-container img{width:100%;max-height:280px;object-fit:cover;display:block}
+        .preview-info-bar{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(transparent,rgba(0,0,0,0.75));color:#fff;font-size:0.78rem;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(4px)}
+        .preview-info-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:8px}
+        .preview-info-bar button{background:rgba(255,255,255,0.2);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:0.9rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+        .preview-info-bar button:hover{background:var(--error)}
+
+        .ai-info-card{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px}
+        .ai-icon-wrapper{width:46px;height:46px;background:var(--bg-card);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}.ai-icon-wrapper img{width:30px;height:30px}
+        .ai-info-content h4{font-size:0.87rem;font-weight:700}.ai-info-content p{font-size:0.76rem;color:var(--text-secondary)}
+        .badge-ai{display:inline-block;background:rgba(63,185,80,0.15);color:var(--success);padding:2px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;border:1px solid rgba(63,185,80,0.3)}
+        .badge-imgbb{display:inline-block;background:rgba(88,166,255,0.15);color:var(--accent-blue);padding:2px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;border:1px solid rgba(88,166,255,0.3)}
+        .password-wrapper{position:relative}
+        .form-input{width:100%;padding:13px 44px 13px 15px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.92rem;color:var(--text-primary);font-family:inherit;letter-spacing:3px}
+        .form-input:focus{outline:none;border-color:var(--accent-blue);box-shadow:0 0 0 4px var(--accent-blue-glow)}
+        .toggle-password{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--text-muted)}.toggle-password:hover{color:var(--accent-blue)}
+        .error-message{color:var(--error);font-size:0.78rem;min-height:18px}
+        .requirement-list{padding:12px 14px;background:var(--bg-input);border-radius:var(--radius-sm);border:1px solid var(--border)}
+        .requirement-item{display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-muted);padding:3px 0}
+        .requirement-item .check-icon{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.6rem}
+        .requirement-item.met .check-icon{background:var(--success);border-color:var(--success);color:#fff}.requirement-item.met{color:var(--success)}
+
+        /* ⭐ সাবমিট বাটন ফিক্স - ওভারফ্লো হিডেন + ফিক্সড সাইজ */
+        .submit-btn{padding:15px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));color:#fff;border:none;border-radius:var(--radius-sm);font-size:1.05rem;font-weight:700;cursor:pointer;width:100%;font-family:inherit;box-shadow:0 6px 22px var(--accent-blue-glow);transition:var(--transition-bounce);position:relative;overflow:hidden;max-height:54px}
+        .submit-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transition:left 0.6s}
+        .submit-btn:hover:not(:disabled)::before{left:100%}
+        .submit-btn:hover:not(:disabled){transform:translateY(-2px)}
+        .submit-btn:disabled{background:var(--bg-input);color:var(--text-muted);cursor:not-allowed;box-shadow:none;border:1px solid var(--border)}
+        .btn-spinner{display:none;width:20px;height:20px;border:2.5px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+
+        .success-overlay{display:none;text-align:center;padding:20px}.success-overlay.show{display:block;animation:popIn 0.5s ease}
+        .form-disabled-overlay{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(26,29,35,0.85);z-index:10;border-radius:var(--radius-2xl);justify-content:center;align-items:center;font-weight:700;font-size:1.1rem;color:var(--text-secondary);text-align:center;padding:30px;backdrop-filter:blur(6px)}.form-disabled-overlay.show{display:flex}
+        .app-footer{text-align:center;margin-top:20px;color:var(--text-muted);font-size:0.78rem}
+        .download-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:linear-gradient(135deg,var(--success),#2ea043);color:#fff;border:none;border-radius:50px;cursor:pointer;font-weight:700;font-size:0.88rem;text-decoration:none;margin-top:14px}.download-btn:hover{transform:translateY(-2px)}
+
+        /* 💬 চ্যাট কার্ড */
+        .chat-card{background:var(--bg-card);border-radius:var(--radius-2xl);border:1px solid var(--border);padding:20px;box-shadow:var(--shadow-xl);display:none;animation:slideUp 0.4s ease}
+        .chat-card.show{display:block}
+        .chat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent-blue),var(--accent-purple));border-radius:3px 3px 0 0}
+        .chat-name-select{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+        .chat-name-select span{font-size:0.82rem;color:var(--text-secondary);white-space:nowrap}
+        .chat-name-select select{padding:8px 12px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:0.85rem;font-family:inherit;flex:1}
+        .chat-messages{height:250px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px}
+        .chat-msg{max-width:80%;padding:8px 12px;border-radius:12px;font-size:0.82rem;position:relative}
+        .chat-msg.admin{background:var(--bg-card);color:var(--text-primary);align-self:flex-start;border:1px solid var(--border)}
+        .chat-msg.self{background:var(--accent-blue);color:#fff;align-self:flex-end}
+        .chat-msg .sender{font-size:0.68rem;opacity:0.7}.chat-msg .time{font-size:0.6rem;opacity:0.5;text-align:right}
+        .chat-msg .del-btn{position:absolute;top:4px;right:8px;background:none;border:none;color:#f85149;cursor:pointer;font-size:0.65rem;opacity:0;transition:opacity 0.2s}
+        .chat-msg:hover .del-btn{opacity:0.7}
+        .chat-input-area{display:flex;gap:8px;margin-top:8px}.chat-input-area input{flex:1;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:20px;font-size:0.85rem;color:var(--text-primary);font-family:inherit}.chat-input-area button{padding:10px 16px;background:var(--accent-blue);color:#fff;border:none;border-radius:20px;cursor:pointer;font-weight:600}
+
+        .chat-toggle-btn{position:fixed;bottom:24px;right:24px;width:52px;height:52px;background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple));color:#fff;border:none;border-radius:50%;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.4);z-index:50;transition:var(--transition);display:flex;align-items:center;justify-content:center}
+        .chat-toggle-btn:hover{transform:scale(1.1);box-shadow:0 8px 30px rgba(88,166,255,0.5)}
+        .chat-toggle-btn .badge{position:absolute;top:-5px;right:-5px;background:var(--error);color:#fff;min-width:20px;height:20px;border-radius:50%;font-size:0.65rem;display:none;align-items:center;justify-content:center}
+
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--accent-steel);border-radius:10px}
+        @media(max-width:680px){.main-card{padding:22px 16px}.app-title{font-size:1.6rem}.chat-toggle-btn{bottom:16px;right:16px}}
+    </style>
+</head>
+<body>
+
+    <div class="blur-overlay" id="blurOverlay"><div class="blur-message"><button class="blur-close-btn" id="blurCloseBtn">✕</button><span style="font-size:3rem;">🏆</span><h3 style="color:var(--warning);">মাসের সেরা ছবি ঘোষিত!</h3><p style="color:var(--text-secondary);">ক্রস বাটনে ক্লিক করে বিজয়ী দেখুন</p></div></div>
+    <div class="dup-modal" id="dupModal"><div class="dup-card"><div class="icon">🚫</div><h3 id="dupTitle">ডুপ্লিকেট সনাক্ত!</h3><p id="dupMsg"></p><button onclick="document.getElementById('dupModal').classList.remove('show')">ঠিক আছে</button></div></div>
+    <div class="particles"><div class="particle"></div><div class="particle"></div><div class="particle"></div></div>
+
+    <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">💬<span class="badge" id="chatBadge">0</span></button>
+
+    <div class="container">
+        <div class="countdown-banner no-time" id="countdownBanner">⏳ লোড হচ্ছে...</div>
+        <div class="top-badge"><span class="badge-pill"><span class="dot"></span> <span id="badgeText">সাবমিশন ওপেন</span></span></div>
+        <header class="app-header"><img src="https://picture-link-generator.rf.gd/uploads/image-selector.png" alt="Logo" class="logo-img-header" onerror="this.style.display='none'"><h1 class="app-title">মাসিক ইমেজ সিলেক্টর</h1><p class="app-subtitle">Google Gemini AI দিয়ে আপনার ছবির সৌন্দর্য মূল্যায়ন</p></header>
+
+        <!-- ⭐ মেইন কার্ড (সাবমিশন ফর্ম) -->
+        <div class="main-card" id="mainCard">
+            <div class="form-disabled-overlay" id="formDisabledOverlay"></div>
+            <div class="steps-container" id="stepsContainer">
+                <div class="step active" id="step1"><div class="step-circle">1</div><span class="step-label">নাম বাছুন</span></div>
+                <div class="step" id="step2"><div class="step-circle">2</div><span class="step-label">ছবি আপলোড</span></div>
+                <div class="step" id="step3"><div class="step-circle">3</div><span class="step-label">কোড দিন</span></div>
+                <div class="step" id="step4"><div class="step-circle">4</div><span class="step-label">জমা দিন</span></div>
+            </div>
+            <form id="submissionForm" class="submission-form" novalidate>
+                <div class="form-group"><label class="form-label">👤 আপনার নাম সিলেক্ট করুন <span class="required-star">*</span></label><select id="userName" class="form-select"><option value="">-- নাম বাছুন --</option></select><span class="error-message" id="nameError"></span></div>
+                <div class="form-group"><label class="form-label">🖼️ আপনার সেরা ছবি আপলোড করুন <span class="required-star">*</span></label><input type="file" id="imageFile" accept="image/*" style="display:none;"><div class="file-upload-area" id="dropZone" onclick="document.getElementById('imageFile').click()"><span class="upload-icon-large">📁</span><p class="upload-text">ছবি সিলেক্ট করতে ক্লিক করুন</p><p class="upload-hint">JPG, PNG, WebP, GIF (32MB)</p><button type="button" class="upload-btn-inline">ছবি বাছুন</button></div><div class="preview-container" id="previewContainer"><img id="previewImg" src="" alt="ছবির প্রিভিউ"><div class="preview-info-bar"><span id="previewName"></span><button id="removeBtn" onclick="event.stopPropagation();">✕</button></div></div><span class="error-message" id="imageError"></span></div>
+                <div class="ai-info-card"><div class="ai-icon-wrapper"><img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" alt="Gemini AI"></div><div class="ai-info-content"><h4>Google Gemini AI <span class="badge-ai">AI</span> <span class="badge-imgbb">ImgBB</span></h4><p>Gemini AI আপনার ছবি বিশ্লেষণ করে ইউনিক ০-২০ স্কোর দেবে</p></div></div>
+                <div class="form-group"><label class="form-label">🔐 সিক্রেট কোড লিখুন <span class="required-star">*</span> <span class="tooltip" data-tooltip="কোড: FG2026">ℹ️</span></label><div class="password-wrapper"><input type="password" id="secretCode" class="form-input" placeholder="••••••" maxlength="6" autocomplete="off"><button type="button" class="toggle-password" id="togglePw">👁️</button></div><span class="error-message" id="codeError"></span></div>
+                <div class="requirement-list" id="checklist"><div class="requirement-item" id="chkName"><span class="check-icon"></span> নাম সিলেক্ট করা হয়েছে</div><div class="requirement-item" id="chkImage"><span class="check-icon"></span> ছবি আপলোড করা হয়েছে</div><div class="requirement-item" id="chkCode"><span class="check-icon"></span> সঠিক সিক্রেট কোড (FG2026)</div></div>
+                <button type="submit" class="submit-btn" id="submitBtn" disabled><span id="submitBtnText">🔒 সব তথ্য পূরণ করুন</span><span class="btn-spinner"></span></button>
+            </form>
+            <div class="success-overlay" id="successOverlay"><div style="font-size:4rem;">🤖</div><h2 style="color:var(--success);">জমা সফল হয়েছে!</h2><p id="successMsg"></p></div>
+        </div>
+
+        <!-- ⭐ চ্যাট কার্ড (আলাদা) -->
+        <div class="chat-card" id="chatCard" style="position:relative;">
+            <div class="chat-name-select">
+                <span>👤 চ্যাট নাম:</span>
+                <select id="chatNameSelect" onchange="onChatNameChange()"><option value="">-- নাম সিলেক্ট করুন --</option></select>
+                <button onclick="closeChat()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">✕</button>
+            </div>
+            <div class="chat-messages" id="userChatMessages"><p style="color:var(--text-muted);text-align:center;">⏳ লোড হচ্ছে...</p></div>
+            <div class="chat-input-area"><input type="text" id="userChatInput" placeholder="মেসেজ লিখুন..."><button onclick="sendUserMessage()">📤</button></div>
+        </div>
+
+        <footer class="app-footer"><p>© 2024 ইমেজ সিলেক্টর • Firebase + ImgBB + Gemini AI</p></footer>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+    const IMGBB_KEY='2173560c78265c188a061374f1bf976d',GEMINI_KEY='AIzaSyBX27M3XgUtISpt_pPhv7m1g40iT7J6ehs';
+    const fbConfig={apiKey:"AIzaSyAhE8FVVKT_KwgyG749GYXMplLajIQpkNw",authDomain:"image-selector-fg.firebaseapp.com",projectId:"image-selector-fg",storageBucket:"image-selector-fg.firebasestorage.app",messagingSenderId:"213780592055",appId:"1:213780592055:web:6a3d50da305d65883ba432"};
+    let db=null,storageMode='imgbb',usersList=[];
+    try{firebase.initializeApp(fbConfig);db=firebase.firestore();console.log('✅ Firebase')}catch(e){console.warn(e)}
+    let selectedFile=null,currentHash=null,votingActive=true,imageHashes=[],timerInterval=null,winnerData=null;
+    let chatVisible=false,lastMsgCount=0,chatInterval=null;
+    const mainCard=document.getElementById('mainCard'),chatCard=document.getElementById('chatCard'),form=document.getElementById('submissionForm'),submitBtn=document.getElementById('submitBtn'),submitBtnText=document.getElementById('submitBtnText'),nameSelect=document.getElementById('userName'),fileInput=document.getElementById('imageFile'),dropZone=document.getElementById('dropZone'),previewContainer=document.getElementById('previewContainer'),previewImg=document.getElementById('previewImg'),previewName=document.getElementById('previewName'),removeBtn=document.getElementById('removeBtn'),secretInput=document.getElementById('secretCode'),togglePw=document.getElementById('togglePw'),countdownBanner=document.getElementById('countdownBanner'),formDisabled=document.getElementById('formDisabledOverlay'),blurOverlay=document.getElementById('blurOverlay'),blurCloseBtn=document.getElementById('blurCloseBtn'),badgeText=document.getElementById('badgeText'),successOverlay=document.getElementById('successOverlay'),successMsg=document.getElementById('successMsg'),dupModal=document.getElementById('dupModal'),dupTitle=document.getElementById('dupTitle'),dupMsg=document.getElementById('dupMsg'),stepsContainer=document.getElementById('stepsContainer'),chatToggleBtn=document.getElementById('chatToggleBtn'),chatBadge=document.getElementById('chatBadge'),chatNameSelect=document.getElementById('chatNameSelect');
+    secretInput.value='';sessionStorage.removeItem('submittedCode');
+    blurCloseBtn.addEventListener('click',function(){blurOverlay.classList.remove('show');if(winnerData)showWinnerModal(winnerData)});
+
+    chatToggleBtn.style.display='flex';
+    if(!chatInterval){chatInterval=setInterval(checkNewMessages,10000)}
+
+    // ⭐ চ্যাট টগল - মেইন কার্ড হাইড করে চ্যাট কার্ড দেখাবে
+    function toggleChat(){
+        chatVisible=!chatVisible;
+        if(chatVisible){
+            mainCard.classList.add('hidden');
+            chatCard.classList.add('show');
+            updateChatNameList();
+            loadUserMessages();
+            chatBadge.style.display='none';
+            chatBadge.textContent='0';
+        }else{
+            closeChat();
+        }
+    }
+
+    function closeChat(){
+        chatVisible=false;
+        mainCard.classList.remove('hidden');
+        chatCard.classList.remove('show');
+    }
+
+    function updateChatNameList(){
+        chatNameSelect.innerHTML='<option value="">-- নাম সিলেক্ট করুন --</option>';
+        usersList.forEach(u=>{const n=typeof u==='string'?u:u.name;chatNameSelect.innerHTML+='<option value="'+n+'">'+n+'</option>'});
+        const saved=sessionStorage.getItem('chatUserName');if(saved)chatNameSelect.value=saved;
+    }
+
+    function onChatNameChange(){const name=chatNameSelect.value;if(name){sessionStorage.setItem('chatUserName',name);loadUserMessages()}}
+    function getChatUserName(){return chatNameSelect.value||sessionStorage.getItem('chatUserName')||''}
+
+    async function loadUserMessages(){try{if(!db)return;const snap=await db.collection('messages').orderBy('timestamp','asc').get();const msgs=[];snap.forEach(doc=>msgs.push({id:doc.id,...doc.data()}));const div=document.getElementById('userChatMessages');if(!div)return;if(!msgs.length){div.innerHTML='<p style="color:var(--text-muted);text-align:center;">কোনো মেসেজ নেই</p>';return}const currentUser=getChatUserName();div.innerHTML=msgs.map(m=>{const isAdmin=m.sender==='admin';const isOwn=m.senderName===currentUser&&m.sender==='user';return`<div class="chat-msg ${isAdmin?'admin':'self'}"><div class="sender">${m.senderName||m.sender}</div>${m.text}<div class="time">${m.timestamp?new Date(m.timestamp).toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'}):''}</div>${isOwn?`<button class="del-btn" onclick="deleteMyMsg('${m.id}')">🗑️</button>`:''}</div>`}).join('');div.scrollTop=div.scrollHeight}catch(e){}}
+    async function deleteMyMsg(msgId){if(!confirm('আপনার মেসেজটি মুছতে চান?'))return;try{await db.collection('messages').doc(msgId).delete();loadUserMessages()}catch(e){}}
+    async function checkNewMessages(){try{if(!db||chatVisible)return;const snap=await db.collection('messages').orderBy('timestamp','asc').get();if(snap.size>lastMsgCount){chatBadge.style.display='flex';chatBadge.textContent=snap.size-lastMsgCount}lastMsgCount=snap.size}catch(e){}}
+    async function sendUserMessage(){const input=document.getElementById('userChatInput');const text=input.value.trim();const userName=getChatUserName();if(!userName){alert('⚠️ উপরে থেকে চ্যাট নাম সিলেক্ট করুন!');return}if(!text)return;try{await db.collection('messages').add({text,sender:'user',senderName:userName,timestamp:new Date().toISOString()});input.value='';loadUserMessages()}catch(e){}}
+
+    async function loadSettings(){try{if(!db)return;const u=await db.collection('settings').doc('users').get();usersList=u.exists&&u.data().list?u.data().list:['Talha','Rafi','Punno','Jesan'];const s=await db.collection('settings').doc('storageConfig').get();storageMode=s.exists&&s.data().mode?s.data().mode:localStorage.getItem('storageMode')||'imgbb';renderUserOptions();updateChatNameList()}catch(e){usersList=['Talha','Rafi','Punno','Jesan'];renderUserOptions()}}
+    function renderUserOptions(){nameSelect.innerHTML='<option value="">-- নাম বাছুন --</option>';usersList.forEach(u=>{const n=typeof u==='string'?u:u.name;nameSelect.innerHTML+='<option value="'+n+'">'+n+'</option>'})}
+
+    async function loadHashes(){try{if(!db)return;const s=await db.collection('submissions').get();imageHashes=[];s.forEach(d=>{if(d.data().imageHash)imageHashes.push(d.data().imageHash)})}catch(e){}}
+    loadHashes();
+    function genHash(b64){let h=0;const s=b64.substring(0,2000)+b64.substring(b64.length-2000);for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return Math.abs(h).toString(36)}
+
+    fileInput.addEventListener('change',function(){if(!votingActive){alert('⏰ ভোটিং সময় নয়!');return}const f=this.files[0];if(!f)return;if(f.size>32*1024*1024){document.getElementById('imageError').textContent='❌ 32MB max';this.value='';return}selectedFile=f;document.getElementById('imageError').textContent='';const r=new FileReader();r.onload=function(e){currentHash=genHash(e.target.result);if(imageHashes.includes(currentHash)&&localStorage.getItem('duplicateEnabled')!=='false'){dupTitle.textContent='🚫 ডুপ্লিকেট!';dupMsg.textContent='ছবি ইতিমধ্যে সাবমিট করা হয়েছে।';dupModal.classList.add('show');selectedFile=null;fileInput.value='';currentHash=null;return}previewImg.src=e.target.result;previewName.textContent=f.name+' ('+formatSize(f.size)+')';previewContainer.classList.add('show');dropZone.style.display='none';updateStep(2,'done');checkAll()};r.readAsDataURL(f)});
+    removeBtn.addEventListener('click',function(e){e.stopPropagation();selectedFile=null;currentHash=null;fileInput.value='';previewContainer.classList.remove('show');dropZone.style.display='';previewImg.src='';updateStep(2,'active');updateStep(3,'');updateStep(4,'');checkAll()});
+    dropZone.addEventListener('dragover',function(e){e.preventDefault();dropZone.classList.add('drag-over')});dropZone.addEventListener('dragleave',function(){dropZone.classList.remove('drag-over')});dropZone.addEventListener('drop',function(e){e.preventDefault();dropZone.classList.remove('drag-over');if(e.dataTransfer.files.length){fileInput.files=e.dataTransfer.files;fileInput.dispatchEvent(new Event('change'))}});
+    nameSelect.addEventListener('change',function(){document.getElementById('nameError').textContent=this.value?'':'❌ নাম সিলেক্ট করুন';if(this.value){updateStep(1,'done');updateStep(2,'active')}else updateStep(1,'active');checkAll()});
+    secretInput.addEventListener('input',function(){const c=this.value,err=document.getElementById('codeError');if(!c){err.textContent='';updateStep(3,'active')}else if(c==='FG2026'){err.textContent='✅ সঠিক কোড';err.style.color='#3fb950';updateStep(3,'done')}else{err.textContent=c.length<6?'❌ ৬ অক্ষর':'❌ ভুল! FG2026';err.style.color='#f85149';updateStep(3,'error')}checkAll()});
+    togglePw.addEventListener('click',function(){if(secretInput.type==='password'){secretInput.type='text';this.textContent='🙈'}else{secretInput.type='password';this.textContent='👁️'}});
+
+    function checkAll(){const n=!!nameSelect.value,i=!!selectedFile,c=secretInput.value==='FG2026',all=n&&i&&c&&votingActive;updateCheck('chkName',n);updateCheck('chkImage',i);updateCheck('chkCode',c);if(all){submitBtn.disabled=false;submitBtnText.textContent='🚀 এন্ট্রি জমা দিন';updateStep(4,'active')}else{submitBtn.disabled=true;if(!votingActive){submitBtnText.textContent='⏰ ভোটিং শেষ';return}const m=[];if(!n)m.push('নাম');if(!i)m.push('ছবি');if(!c)m.push('কোড');submitBtnText.textContent=m.length?'🔒 '+m.join(', ')+' প্রয়োজন':'🔒 তথ্য পূরণ করুন'}}
+    function updateCheck(id,ok){const el=document.getElementById(id);if(ok){el.classList.add('met');el.querySelector('.check-icon').textContent='✓'}else{el.classList.remove('met');el.querySelector('.check-icon').textContent=''}}
+    function updateStep(n,s){const el=document.getElementById('step'+n);el.classList.remove('active','done','error');if(s==='active')el.classList.add('active');if(s==='done')el.classList.add('done');if(s==='error')el.classList.add('error');const nd=document.getElementById('step1').classList.contains('done'),id=document.getElementById('step2').classList.contains('done'),cd=document.getElementById('step3').classList.contains('done'),sd=document.getElementById('step4').classList.contains('done');stepsContainer.classList.remove('step1-done','step2-done','step3-done','step4-done');if(nd&&!id)stepsContainer.classList.add('step1-done');if(nd&&id&&!cd)stepsContainer.classList.add('step2-done');if(nd&&id&&cd&&!sd)stepsContainer.classList.add('step3-done');if(nd&&id&&cd&&sd)stepsContainer.classList.add('step4-done')}
+    function formatSize(b){if(!b)return'0 B';const k=1024,s=['B','KB','MB'];const i=Math.floor(Math.log(b)/Math.log(k));return(b/Math.pow(k,i)).toFixed(1)+' '+s[i]}
+    function fileToBase64(file){return new Promise(function(resolve){const r=new FileReader();r.onload=function(){resolve(r.result)};r.readAsDataURL(file)})}
+
+    async function uploadToLocalServer(b64,n){try{const r=await fetch('upload.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,name:n})});const d=await r.json();return d.success?{url:d.url,downloadUrl:d.download_url}:null}catch(e){return null}}
+    async function uploadImage(file){let result={url:null,localUrl:null,downloadUrl:null,storageType:storageMode};try{const b64=await fileToBase64(file);if(storageMode==='imgbb'||storageMode==='both'){const ib=await uploadImgBB(file);if(ib){result.url=ib.url;result.thumb=ib.thumb}}if(storageMode==='uploads'||storageMode==='both'){const lr=await uploadToLocalServer(b64,nameSelect.value);if(lr){result.localUrl=lr.url;result.downloadUrl=lr.downloadUrl;if(!result.url)result.url=lr.url}else{result.localUrl=b64;if(!result.url)result.url=b64}}if(!result.url){result.url=b64;result.localUrl=b64;result.storageType='fallback'}return result}catch(e){const b64=await fileToBase64(file);return{url:b64,localUrl:b64,storageType:'fallback'}}}
+    async function uploadImgBB(file){try{const b64=await fileToBase64(file);const fd=new FormData();fd.append('key',IMGBB_KEY);fd.append('image',b64.split('base64,')[1]);const r=await fetch('https://api.imgbb.com/1/upload',{method:'POST',body:fd});const d=await r.json();return d.success?{url:d.data.url,thumb:d.data.thumb?.url}:null}catch(e){return null}}
+    async function getScore(img){try{let h=0;const s=img.substring(0,2000)+img.substring(img.length-2000);for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}const fp=Math.abs(h),pb=img.includes('base64,')?img.split('base64,')[1]:img;const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:`Rate 0-20. Fingerprint:${fp}. DIFFERENT score.`},{inline_data:{mime_type:'image/jpeg',data:pb}}]}],generationConfig:{temperature:0.9}})});const d=await r.json(),t=d.candidates?.[0]?.content?.parts?.[0]?.text||'',m=t.match(/(\d+\.?\d*)/);if(m&&m[1]>=0&&m[1]<=20)return Math.round(m[1]*10)/10;return Math.round(Math.min(20,(fp%12)+6+Math.random()*3)*10)/10}catch(e){return Math.round((7+Math.random()*11)*10)/10}}
+    async function saveFB(data){if(!db)return{id:'local_'+Date.now(),local:true};const my=new Date().toISOString().slice(0,7);if(localStorage.getItem('duplicateEnabled')!=='false'){const dup=await db.collection('submissions').where('imageHash','==',data.imageHash).get();if(!dup.empty)throw new Error('ডুপ্লিকেট!');const nc=await db.collection('submissions').where('userName','==',data.userName).where('monthYear','==',my).get();if(!nc.empty)throw new Error(data.userName+' আগে সাবমিট করেছেন!')}const dr=await db.collection('submissions').add({userName:data.userName,imageUrl:data.imageUrl,localUrl:data.localUrl||null,downloadUrl:data.downloadUrl||null,thumbnailUrl:data.thumb||null,imageHash:data.imageHash,score:data.score,storageType:data.storageType,aiPlatform:'gemini',monthYear:my,submittedAt:new Date().toISOString(),status:'scored'});imageHashes.push(data.imageHash);return{id:dr.id,local:false}}
+
+    form.addEventListener('submit',async function(e){e.preventDefault();if(!votingActive){alert('⏰ শেষ!');return}if(!nameSelect.value){document.getElementById('nameError').textContent='❌ নাম';return}if(!selectedFile){document.getElementById('imageError').textContent='❌ ছবি';return}if(secretInput.value!=='FG2026'){document.getElementById('codeError').textContent='❌ FG2026';secretInput.focus();return}submitBtn.disabled=true;submitBtnText.textContent='⏳ জমা হচ্ছে...';document.querySelector('.btn-spinner').style.display='inline-block';try{const up=await uploadImage(selectedFile);submitBtnText.textContent='🤖 AI...';const sc=localStorage.getItem('geminiEnabled')!=='false'?await getScore(up.url):Math.round((7+Math.random()*11)*10)/10;submitBtnText.textContent='💾 সেভ...';const r=await saveFB({userName:nameSelect.value,imageUrl:up.url,localUrl:up.localUrl,downloadUrl:up.downloadUrl,thumb:up.thumb,storageType:up.storageType,score:sc,imageHash:currentHash});form.style.display='none';document.getElementById('checklist').style.display='none';successOverlay.classList.add('show');successMsg.innerHTML='<strong>স্কোর: '+sc+'/20</strong><br><small>'+up.storageType+' • '+(r.local?'লোকাল':'Firebase')+'</small>'}catch(er){if(er.message.includes('ডুপ্লিকেট')||er.message.includes('আগে')){dupTitle.textContent='🚫 বাতিল!';dupMsg.textContent=er.message;dupModal.classList.add('show')}else alert('❌ '+er.message);submitBtn.disabled=false;submitBtnText.textContent='🚀 এন্ট্রি জমা দিন';document.querySelector('.btn-spinner').style.display='none'}});
+
+    async function loadTimer(){
+        countdownBanner.className='countdown-banner no-time';countdownBanner.innerHTML='⏳ লোড হচ্ছে...';
+        try{if(!db){countdownBanner.innerHTML='⚠️ Firebase সংযুক্ত নয়';votingActive=true;formDisabled.classList.remove('show');checkAll();return}const doc=await db.collection('settings').doc('votingPeriod').get();if(!doc.exists){countdownBanner.className='countdown-banner no-time';countdownBanner.innerHTML='⚠️ ভোটিং শুরু হয়নি<br><small>অ্যাডমিন সময়সীমা নির্ধারণ করেনি</small>';votingActive=true;formDisabled.classList.remove('show');badgeText.textContent='সাবমিশন ওপেন';checkAll();return}const d=doc.data(),start=new Date(d.start),end=new Date(d.end);
+        function upd(){const now=new Date();if(now<start){votingActive=false;const r=Math.floor((start-now)/1000),dd=Math.floor(r/86400),hh=Math.floor((r%86400)/3600),mm=Math.floor((r%3600)/60),ss=r%60;countdownBanner.className='countdown-banner upcoming';countdownBanner.innerHTML='⏳ ভোটিং শুরু হতে বাকি<br><strong>'+dd+'দিন '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0')+'</strong>';formDisabled.classList.add('show');formDisabled.textContent='⏰ '+start.toLocaleDateString('bn-BD')+' থেকে শুরু';badgeText.textContent='ভোটিং শুরু হয়নি';submitBtn.disabled=true;blurOverlay.classList.remove('show');return true}else if(now<end){votingActive=true;const r=Math.floor((end-now)/1000),dd=Math.floor(r/86400),hh=Math.floor((r%86400)/3600),mm=Math.floor((r%3600)/60),ss=r%60;countdownBanner.className='countdown-banner running';countdownBanner.innerHTML='🟢 ভোটিং চলছে<br><strong>'+dd+'দিন '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0')+'</strong>';formDisabled.classList.remove('show');badgeText.textContent='সাবমিশন ওপেন';checkAll();blurOverlay.classList.remove('show');return true}else{votingActive=false;showWinnerBanner();blurOverlay.classList.add('show');return false}}upd();if(timerInterval)clearInterval(timerInterval);timerInterval=setInterval(function(){if(!upd())clearInterval(timerInterval)},1000)}catch(e){}}
+    async function showWinnerBanner(){try{if(!db)return;const s=await db.collection('submissions').orderBy('score','desc').limit(1).get();if(!s.empty){winnerData=s.docs[0].data();countdownBanner.className='countdown-banner ended';countdownBanner.innerHTML='<div class="winner-banner-content" id="winnerBannerClick" style="cursor:pointer;"><div class="winner-banner-crown">🏆</div><div style="font-size:1.2rem;font-weight:700;">ভোটিং শেষ!</div><div style="font-size:0.95rem;">বিজয়ীর ছবি দেখতে ক্লিক করুন</div></div>';document.getElementById('winnerBannerClick').addEventListener('click',function(){showWinnerModal(winnerData)});formDisabled.classList.add('show');formDisabled.textContent='🏁 ভোটিং শেষ';badgeText.textContent='ভোটিং শেষ';submitBtn.disabled=true;form.style.display='none';document.getElementById('checklist').style.display='none'}else{countdownBanner.innerHTML='<div class="winner-banner-content"><div class="winner-banner-crown">🏁</div><div>ভোটিং শেষ • কোনো সাবমিশন নেই</div></div>'}}catch(e){}}
+    function showWinnerModal(w){const old=document.getElementById('winnerDetailModal');if(old)old.remove();const modal=document.createElement('div');modal.id='winnerDetailModal';modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:300;display:flex;justify-content:center;align-items:center';const sd=w.submittedAt?new Date(w.submittedAt):null;const ds=sd?sd.toLocaleDateString('bn-BD',{year:'numeric',month:'long',day:'numeric'}):'অজানা';const ts=sd?sd.toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'}):'';const imgUrl=w.imageUrl||'';const isB64=imgUrl.startsWith('data:');const hasDL=w.downloadUrl&&!isB64;modal.innerHTML='<div style="background:#282c34;padding:32px;border-radius:24px;text-align:center;max-width:500px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.6);border:1px solid #30363d;position:relative;"><button id="closeWM" style="position:absolute;top:14px;right:16px;background:#1e2128;border:1px solid #30363d;font-size:1.3rem;cursor:pointer;color:#6e7681;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;">✕</button><div style="font-size:3.5rem;">👑</div><h2 style="color:#d29922;">🏆 মাসের সেরা ছবি 🏆</h2>'+(imgUrl&&!isB64?'<img src="'+imgUrl+'" style="width:170px;height:170px;object-fit:cover;border-radius:50%;border:4px solid #d29922;margin:16px 0;" crossorigin="anonymous">':'')+(imgUrl&&isB64?'<img src="'+imgUrl+'" style="width:170px;height:170px;object-fit:cover;border-radius:50%;border:4px solid #d29922;margin:16px 0;">':'')+'<div style="font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,#58a6ff,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">'+w.userName+'</div><div style="font-size:3.5rem;font-weight:900;color:#d29922;">'+w.score+'/20</div><div style="color:#8b949e;">🤖 Google Gemini AI</div><div style="margin:12px 0;padding:10px 16px;background:#1e2128;border-radius:10px;border:1px solid #30363d;display:inline-block;"><div style="color:#8b949e;font-size:0.8rem;">📅 আপলোডের তারিখ</div><div style="color:#e1e4e8;font-size:0.9rem;">'+ds+' • '+ts+'</div></div>'+(hasDL?'<a href="'+w.downloadUrl+'" class="download-btn" target="_blank">📥 ডাউনলোড (লোকাল)</a>':(imgUrl&&!isB64?'<a href="'+imgUrl+'" download="winner_'+w.userName+'.jpg" class="download-btn" target="_blank">📥 ডাউনলোড</a>':(imgUrl&&isB64?'<button onclick="downloadB64(\''+imgUrl+'\',\'winner_'+w.userName+'.jpg\')" class="download-btn">📥 ডাউনলোড</button>':'')))+'<div style="margin-top:16px;padding:14px;background:#1e2128;border-radius:12px;border:1px solid #30363d;"><div style="color:#d29922;">🔔 পরবর্তী মাসের প্রতিযোগিতা</div><div style="color:#6e7681;">শীঘ্রই শুরু হবে</div></div><button id="closeWB" style="margin-top:16px;padding:12px 32px;background:linear-gradient(135deg,#58a6ff,#8b5cf6);color:#fff;border:none;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;">বন্ধ করুন</button></div>';document.body.appendChild(modal);document.getElementById('closeWM').addEventListener('click',function(){modal.remove()});document.getElementById('closeWB').addEventListener('click',function(){modal.remove()})}
+    function downloadB64(b64,fn){const a=document.createElement('a');a.href=b64;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a)}
+
+    loadSettings();checkAll();loadTimer();console.log('✅ Index v27 | All Fixed');
+    </script>
+</body>
+</html>
